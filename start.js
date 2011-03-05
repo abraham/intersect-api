@@ -13,7 +13,7 @@ http.createServer(function (request, result) {
     res.writeHead(404, {'Content-Type': 'application/json'});
     res.end('{"error":"Not found"}');
   }
-}).listen(8124, "127.0.0.1");
+}).listen(8743, "intersect.nodester.com");
 
 var userA = { friends: [], followers: [], screenName: null },
     userB = { friends: [], followers: [], screenName: null },
