@@ -29,10 +29,10 @@ var userA = { friends: [], followers: [], screenName: null },
     res = false;
 
 var twit = new twitter({
-  consumer_key: '',
-  consumer_secret: '',
-  access_token_key: '',
-  access_token_secret: ''
+  consumer_key: 'yMADRIZVJekKZQB0Ve7WKw',
+  consumer_secret: 'GeMBas8RSBJCdO1uGLL75K8UQdvFkN8AoBDGOYDkA',
+  access_token_key: '18548072-RXIsrcofww43ICYByoK5hZPvgIuAKJ0HtEtjCyRtd',
+  access_token_secret: 'YiSZLi8RI4mPxrks38WHbU0w8UqmkLZNJF7CJUx924'
 });
 
 function init(options) {
