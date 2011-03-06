@@ -5,13 +5,22 @@ var sys = require('sys'),
     http = require('http');
 
 http.createServer(function (request, result) {
-  res = result;
   var options = require('url').parse(request.url, true);
-  if (options && options.query && options.query.screen_name) {
-    init(options.query.screen_name.split(','));
-  } else {
+  res = result;
+  if (!options.pathname && options.pathname !== '/intersect.json') {
     res.writeHead(404, {'Content-Type': 'application/json'});
-    res.end('{"error":"Not found"}');
+    res.end('{"error":"Unknown API method"}');
+  } else if (request.method !== 'GET') {
+    res.writeHead(405, { 'Content-Type': 'application/json', 'Allow': 'GET' });
+    res.end('{"error":"Requires HTTP method: GET"}');
+  } else if (options.query && !options.query.screen_name) {
+    res.writeHead(400, {'Content-Type': 'application/json'});
+    res.end('{"error":"Missing required parameter: screen_name"}');
+  } else if (options.query.screen_name.split(',').length !== 2) {
+    res.writeHead(400, {'Content-Type': 'application/json'});
+    res.end('{"error":"Invalad parameter value: screen_name"}');
+  } else {
+    init(options.query.screen_name.split(','));
   }
 }).listen(8743);
 
