@@ -1,5 +1,3 @@
-require.paths.unshift('/usr/local/lib/node');
-
 var sys = require('sys'),
     twitter = require('twitter'),
     http = require('http'),
