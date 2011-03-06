@@ -2,7 +2,8 @@ require.paths.unshift('/usr/local/lib/node');
 
 var sys = require('sys'),
     twitter = require('twitter'),
-    http = require('http');
+    http = require('http'),
+    config = require('./config').config;
 
 http.createServer(function (request, result) {
   var options = require('url').parse(request.url, true);
@@ -40,10 +41,10 @@ var users = [
     res = false;
 
 var twit = new twitter({
-  consumer_key: 'yMADRIZVJekKZQB0Ve7WKw',
-  consumer_secret: 'GeMBas8RSBJCdO1uGLL75K8UQdvFkN8AoBDGOYDkA',
-  access_token_key: '18548072-RXIsrcofww43ICYByoK5hZPvgIuAKJ0HtEtjCyRtd',
-  access_token_secret: 'YiSZLi8RI4mPxrks38WHbU0w8UqmkLZNJF7CJUx924'
+  consumer_key: config.twitter.consumer_key,
+  consumer_secret: config.twitter.consumer_secret,
+  access_token_key: config.twitter.access_token_key,
+  access_token_secret: config.twitter.access_token_secret
 });
 
 function init(options) {
@@ -125,6 +126,7 @@ function buildJson() {
   results.common_followers = [];
   results[users[0].screenName + '_friends_following_' + users[1].screenName] = [];
   results[users[1].screenName + '_friends_following_' + users[0].screenName] = [];
+
   commonFriends.forEach(function(element, index, array) {
     results.common_friends.push(profiles.filter(function(element, index, array) {
       return element.id_str == this.id;
@@ -145,7 +147,7 @@ function buildJson() {
       return element.id_str == this.id;
     }, { id: element }));
   });
+
   res.writeHead(200, {'Content-Type': 'application/json'});
   res.end(JSON.stringify(results));
-  
 }
