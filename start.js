@@ -37,7 +37,6 @@ var users = [
     ids = [],
     profiles = [],
     active = 0
-    results = {},
     res = false;
 
 var twit = new twitter({
@@ -114,8 +113,7 @@ function lookupUsers(options) {
 }
 
 function completeLookup(options) {
-    profiles = profiles.concat(options.data);
-
+  profiles = profiles.concat(options.data);
   if (active === 0) {
     buildJson();
   }
