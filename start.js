@@ -122,30 +122,39 @@ function completeLookup(options) {
 }
 
 function buildJson() {
-  results.common_friends = [];
-  results.common_followers = [];
+  var results = {
+    common_friends: [],
+    common_followers: []
+  };
   results[users[0].screenName + '_friends_following_' + users[1].screenName] = [];
   results[users[1].screenName + '_friends_following_' + users[0].screenName] = [];
 
-  commonFriends.forEach(function(element, index, array) {
-    results.common_friends.push(profiles.filter(function(element, index, array) {
-      return element.id_str == this.id;
-    }, { id: element }));
-  });
-  commonFollowers.forEach(function(element, index, array) {
-    results.common_followers.push(profiles.filter(function(element, index, array) {
-      return element.id_str == this.id;
-    }, { id: element }));
-  });
-  userAFriendsFollowingUserB.forEach(function(element, index, array) {
-    results[users[0].screenName + '_friends_following_' + users[1].screenName].push(profiles.filter(function(element, index, array) {
-      return element.id_str == this.id;
-    }, { id: element }));
-  });
-  userBFriendsFollowingUserA.forEach(function(element, index, array) {
-    results[users[1].screenName + '_friends_following_' + users[0].screenName].push(profiles.filter(function(element, index, array) {
-      return element.id_str == this.id;
-    }, { id: element }));
+  [
+    {
+      list: commonFriends,
+      name: 'common_friends'
+    },
+    {
+      list: commonFollowers,
+      name: 'common_followers'
+    },
+    {
+      list: userAFriendsFollowingUserB,
+      name: users[0].screenName + '_friends_following_' + users[1].screenName
+    },
+    {
+      list: userBFriendsFollowingUserA,
+      name: users[1].screenName + '_friends_following_' + users[0].screenName
+    }
+  ].forEach(function (element, index, array) {
+    element.list.forEach(function(element, index, array) {
+      var profile = profiles.filter(function(element, index, array) {
+        return element.id_str == this.id;
+      }, { id: element })
+      if (profile.length) {
+        results[this.name].push(profile[0]);
+      }
+    }, { name: element.name });
   });
 
   res.writeHead(200, {'Content-Type': 'application/json'});
