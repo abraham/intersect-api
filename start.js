@@ -20,12 +20,14 @@ http.createServer(function (request, result) {
     res.writeHead(400, {'Content-Type': 'application/json'});
     res.end('{"error":"Invalad parameter value: screen_name"}');
   } else {
-    init(options.query.screen_name.split(','));
+    init({ users: options.query.screen_name.split(',') });
   }
 }).listen(8743);
 
-var userA = { friends: [], followers: [], screenName: null },
-    userB = { friends: [], followers: [], screenName: null },
+var users = [
+      { friends: [], followers: [], screenName: null },
+      { friends: [], followers: [], screenName: null }
+    ],
     commonFriends = [],
     commonFollowers = [],
     userAFriendsFollowingUserB = [],
@@ -45,34 +47,25 @@ var twit = new twitter({
 });
 
 function init(options) {
-  getIds({
-    screenName: options[0],
-    path: 'friends',
-    user: userA
-  });
-  getIds({
-    screenName: options[0],
-    path: 'followers',
-    user: userA
-  });
-  getIds({
-    screenName: options[1],
-    path: 'friends',
-    user: userB
-  });
-  getIds({
-    screenName: options[1],
-    path: 'followers',
-    user: userB
+  options.users.forEach(function (element, index, array) {
+    ['friends', 'followers'].forEach(function (element, index, array) {
+      getIds({
+        user: this.user,
+        path: element,
+        userIndex: this.userIndex
+      });
+    }, { user: element, userIndex: index });
   });
 }
 
 function getIds(options) {
-  twit.get('/' + options.path + '/ids.json', { screen_name: options.screenName }, function(data){
+  twit.get('/' + options.path + '/ids.json', {
+    screen_name: options.user
+  }, function(data){
     complete++;
     if (data.statusCode === undefined && Array.isArray(data)) {
-      options.user[options.path] = data;
-      options.user.screenName = options.screenName;
+      users[options.userIndex][options.path] = data;
+      users[options.userIndex].screenName = options.user;
       compute();
     }
   });
@@ -81,17 +74,17 @@ function getIds(options) {
 function compute(options) {
   if (complete === 4) {
     var temp = [];
-    commonFriends = userA.friends.filter(function (element, index, array) {
-      return userB.friends.indexOf(element) > -1;
+    commonFriends = users[0].friends.filter(function (element, index, array) {
+      return users[1].friends.indexOf(element) > -1;
     });
-    commonFollowers = userA.followers.filter(function (element, index, array) {
-      return userB.followers.indexOf(element) > -1;
+    commonFollowers = users[0].followers.filter(function (element, index, array) {
+      return users[1].followers.indexOf(element) > -1;
     });
-    userAFriendsFollowingUserB = userA.friends.filter(function (element, index, array) {
-      return userB.followers.indexOf(element) > -1;
+    userAFriendsFollowingUserB = users[0].friends.filter(function (element, index, array) {
+      return users[1].followers.indexOf(element) > -1;
     });
-    userBFriendsFollowingUserA = userA.followers.filter(function (element, index, array) {
-      return userB.friends.indexOf(element) > -1;
+    userBFriendsFollowingUserA = users[0].followers.filter(function (element, index, array) {
+      return users[1].friends.indexOf(element) > -1;
     });
     temp = commonFriends.concat(commonFollowers, userAFriendsFollowingUserB, userBFriendsFollowingUserA);
 
@@ -111,7 +104,11 @@ function compute(options) {
 function lookupUsers(options) {
   twit.get('/users/lookup.json', { user_id: options.userIds }, function(data){
     active--;
-    completeLookup({ data: data });
+    if (data.statusCode === undefined && Array.isArray(data)) {
+      completeLookup({ data: data });
+    } else {
+      completeLookup({ data: [] });
+    }
   });
 }
 
@@ -126,8 +123,8 @@ function completeLookup(options) {
 function buildJson() {
   results.common_friends = [];
   results.common_followers = [];
-  results[userA.screenName + '_friends_following_' + userB.screenName] = [];
-  results[userB.screenName + '_friends_following_' + userA.screenName] = [];
+  results[users[0].screenName + '_friends_following_' + users[1].screenName] = [];
+  results[users[1].screenName + '_friends_following_' + users[0].screenName] = [];
   commonFriends.forEach(function(element, index, array) {
     results.common_friends.push(profiles.filter(function(element, index, array) {
       return element.id_str == this.id;
@@ -139,12 +136,12 @@ function buildJson() {
     }, { id: element }));
   });
   userAFriendsFollowingUserB.forEach(function(element, index, array) {
-    results[userA.screenName + '_friends_following_' + userB.screenName].push(profiles.filter(function(element, index, array) {
+    results[users[0].screenName + '_friends_following_' + users[1].screenName].push(profiles.filter(function(element, index, array) {
       return element.id_str == this.id;
     }, { id: element }));
   });
   userBFriendsFollowingUserA.forEach(function(element, index, array) {
-    results[userB.screenName + '_friends_following_' + userA.screenName].push(profiles.filter(function(element, index, array) {
+    results[users[1].screenName + '_friends_following_' + users[0].screenName].push(profiles.filter(function(element, index, array) {
       return element.id_str == this.id;
     }, { id: element }));
   });
