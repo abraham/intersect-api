@@ -8,7 +8,7 @@ var sys = require('sys'),
 http.createServer(function (request, result) {
   var options = require('url').parse(request.url, true);
   res = result;
-  if (!options.pathname && options.pathname !== '/intersect.json') {
+  if (!options.pathname || options.pathname !== '/intersect.json') {
     res.writeHead(404, {'Content-Type': 'application/json'});
     res.end('{"error":"Unknown API method"}');
   } else if (request.method !== 'GET') {
