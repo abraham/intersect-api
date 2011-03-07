@@ -36,7 +36,7 @@ http.createServer(function (request, result) {
     callback = options.query.callback;
   }
 
-  if (!options.pathname || options.pathname !== '/intersect.json') {
+  if (!options.pathname || options.pathname !== '/v1/intersect.json') {
     res.writeHead(404, {'Content-Type': 'application/json'});
     res.end('{"error":"Unknown API method"}');
   } else if (request.method !== 'GET') {
