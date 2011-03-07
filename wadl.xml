@@ -1,0 +1,36 @@
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:apigee="http://api.apigee.com/wadl/2010/07/" 
+  xmlns="http://wadl.dev.java.net/2009/02"
+  xsi:schemaLocation="http://wadl.dev.java.net/2009/02 http://apigee.com/schemas/wadl-schema.xsd http://api.apigee.com/wadl/2010/07/ http://apigee.com/schemas/apigee-wadl-extensions.xsd">
+
+  <!-- Base defines the domain and base path of the endpoint -->
+  <resources base="http://intersect.api.abrah.am/v1">
+
+    <resource path="intersect.json">
+
+      <param name="screen_name" required="true" type="xsd:string" style="query" default="abraham,therealcaro">
+        <doc>Specifies two Twitter users to find an intersect of.</doc>
+      </param>
+
+      <param name="callback" required="false" type="xsd:string" style="query">
+        <doc>
+          Specifies JavaScript callback function execute upon completion.
+        </doc>
+      </param>
+
+      <method id="intersect" name="GET" apigee:displayName="intersect">
+        <apigee:tags>
+          <apigee:tag primary="true">intersect</apigee:tag>
+            <apigee:tag primary="true">intersect</apigee:tag>
+          </apigee:tags>
+        <apigee:authentication required="false" />
+        <apigee:example url="/intersect.json" />
+
+        <doc title="" apigee:url="http://intersect.labs.abrah.am/#api">
+          Returns common friends, followers, and friends following between two Twitter users.
+        </doc>
+      </method>
+    </resource>
+  </resources>
+</application>
