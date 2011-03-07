@@ -14,15 +14,13 @@
       </param>
 
       <param name="callback" required="false" type="xsd:string" style="query">
-        <doc>
-          Specifies JavaScript callback function execute upon completion.
-        </doc>
+        <doc>Specifies JavaScript callback function execute upon completion.</doc>
       </param>
 
       <method id="intersect" name="GET" apigee:displayName="intersect">
         <apigee:tags>
           <apigee:tag primary="true">intersect</apigee:tag>
-            <apigee:tag primary="true">intersect</apigee:tag>
+            <apigee:tag>intersect</apigee:tag>
           </apigee:tags>
         <apigee:authentication required="false" />
         <apigee:example url="/intersect.json" />
