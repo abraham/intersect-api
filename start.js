@@ -8,6 +8,11 @@ var sys = require('sys'),
 http.createServer(function (request, result) {
   var options = require('url').parse(request.url, true);
   res = result;
+
+  if (options.query && options.query.callback) {
+    callback = options.query.callback;
+  }
+
   if (!options.pathname || options.pathname !== '/intersect.json') {
     res.writeHead(404, {'Content-Type': 'application/json'});
     res.end('{"error":"Unknown API method"}');
@@ -37,7 +42,8 @@ var users = [
     ids = [],
     profiles = [],
     active = 0
-    res = false;
+    res = false,
+    callback = false;
 
 var twit = new twitter({
   consumer_key: config.twitter.consumer_key,
@@ -157,5 +163,9 @@ function buildJson() {
   });
 
   res.writeHead(200, {'Content-Type': 'application/json'});
-  res.end(JSON.stringify(results));
+  if (callback) {
+    res.end(callback + '(' + JSON.stringify(results) + ')');
+  } else {
+    res.end(JSON.stringify(results));
+  }
 }
