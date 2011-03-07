@@ -1,9 +1,32 @@
 require.paths.unshift('/usr/local/lib/node');
 
 var sys = require('sys'),
-    twitter = require('twitter'),
+    Twitter = require('twitter'),
     http = require('http'),
     config = require('./config').config;
+
+var users = [
+      { friends: [], followers: [], screenName: null },
+      { friends: [], followers: [], screenName: null }
+    ],
+    commonFriends = [],
+    commonFollowers = [],
+    userAFriendsFollowingUserB = [],
+    userBFriendsFollowingUserA = [],
+    complete = 0,
+    ids = [],
+    profiles = [],
+    active = 0
+    res = false,
+    callback = false;
+
+var twitter = new Twitter({
+  consumer_key: config.twitter.consumer_key,
+  consumer_secret: config.twitter.consumer_secret,
+  access_token_key: config.twitter.access_token_key,
+  access_token_secret: config.twitter.access_token_secret,
+  rest_base: 'http://api.twitter.com/1'
+});
 
 http.createServer(function (request, result) {
   var options = require('url').parse(request.url, true);
@@ -30,29 +53,6 @@ http.createServer(function (request, result) {
   }
 }).listen(8771);
 
-var users = [
-      { friends: [], followers: [], screenName: null },
-      { friends: [], followers: [], screenName: null }
-    ],
-    commonFriends = [],
-    commonFollowers = [],
-    userAFriendsFollowingUserB = [],
-    userBFriendsFollowingUserA = [],
-    complete = 0,
-    ids = [],
-    profiles = [],
-    active = 0
-    res = false,
-    callback = false;
-
-var twit = new twitter({
-  consumer_key: config.twitter.consumer_key,
-  consumer_secret: config.twitter.consumer_secret,
-  access_token_key: config.twitter.access_token_key,
-  access_token_secret: config.twitter.access_token_secret,
-  rest_base: 'http://api.twitter.com/1'
-});
-
 function init(options) {
   options.users.forEach(function (element, index, array) {
     ['friends', 'followers'].forEach(function (element, index, array) {
@@ -66,7 +66,7 @@ function init(options) {
 }
 
 function getIds(options) {
-  twit.get('/' + options.path + '/ids.json', {
+  twitter.get('/' + options.path + '/ids.json', {
     screen_name: options.user
   }, function(data){
     complete++;
@@ -109,7 +109,7 @@ function compute(options) {
 }
 
 function lookupUsers(options) {
-  twit.get('/users/lookup.json', { user_id: options.userIds }, function(data){
+  twitter.get('/users/lookup.json', { user_id: options.userIds }, function(data){
     active--;
     if (data.statusCode === undefined && Array.isArray(data)) {
       completeLookup({ data: data });
