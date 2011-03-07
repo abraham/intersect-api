@@ -1,3 +1,5 @@
+require.paths.unshift('/usr/local/lib/node');
+
 var sys = require('sys'),
     twitter = require('twitter'),
     http = require('http'),
@@ -21,7 +23,7 @@ http.createServer(function (request, result) {
   } else {
     init({ users: options.query.screen_name.split(',') });
   }
-}).listen(8743);
+}).listen(8771);
 
 var users = [
       { friends: [], followers: [], screenName: null },
@@ -41,7 +43,8 @@ var twit = new twitter({
   consumer_key: config.twitter.consumer_key,
   consumer_secret: config.twitter.consumer_secret,
   access_token_key: config.twitter.access_token_key,
-  access_token_secret: config.twitter.access_token_secret
+  access_token_secret: config.twitter.access_token_secret,
+  rest_base: 'http://api.twitter.com/1'
 });
 
 function init(options) {
