@@ -1,6 +1,6 @@
 {
   "name": "intersect",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "engines": {
     "node": "~4"
   },
