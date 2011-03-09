@@ -5,35 +5,20 @@ var sys = require('sys'),
     http = require('http'),
     config = require('./config').config;
 
-var users = [
-      { friends: [], followers: [], screenName: null },
-      { friends: [], followers: [], screenName: null }
-    ],
-    commonFriends = [],
-    commonFollowers = [],
-    userAFriendsFollowingUserB = [],
-    userBFriendsFollowingUserA = [],
-    complete = 0,
-    ids = [],
-    profiles = [],
-    active = 0
-    res = false,
-    callback = false;
-
 function reset() {
   users = [
     { friends: [], followers: [], screenName: null },
     { friends: [], followers: [], screenName: null }
-  ],
-  commonFriends = [],
-  commonFollowers = [],
-  userAFriendsFollowingUserB = [],
-  userBFriendsFollowingUserA = [],
-  complete = 0,
-  ids = [],
-  profiles = [],
-  active = 0
-  res = false,
+  ];
+  commonFriends = [];
+  commonFollowers = [];
+  userAFriendsFollowingUserB = [];
+  userBFriendsFollowingUserA = [];
+  complete = 0;
+  ids = [];
+  profiles = [];
+  active = 0;
+  res = false;
   callback = false;
 }
 
@@ -46,8 +31,8 @@ var twitter = new Twitter({
 
 http.createServer(function (request, result) {
   var options = require('url').parse(request.url, true);
-  res = result;
   reset();
+  res = result;
 
   if (options.query && options.query.callback) {
     callback = options.query.callback;
