@@ -38,10 +38,7 @@ http.createServer(function (request, result) {
     callback = options.query.callback;
   }
 
-  if (!opttions.pathname.length) {
-    res.writeHead(404, {'Content-Type': 'application/json'});
-    res.end('{"error":"Unknown API method"}');
-  } else if (options.pathname.indexOf('/v1/') !== 0) {
+  if (options.pathname.indexOf('/v1/') !== 0) {
     res.writeHead(404, {'Content-Type': 'application/json'});
     res.end('{"error":"Unknown API version"}');
   } else if (options.pathname !== '/v1/intersect.json') {
