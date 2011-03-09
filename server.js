@@ -80,6 +80,7 @@ function getIds(options) {
 function compute(options) {
   if (complete === 4) {
     var temp = [];
+    complete = 0;
     commonFriends = users[0].friends.filter(function (element, index, array) {
       return users[1].friends.indexOf(element) > -1;
     });
